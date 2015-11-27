@@ -153,8 +153,8 @@ case "$1" in
 	     # based on the "default entry", for example deb URI trusty main
 	     #      
 	     releasesArray=($(echo ${suitesArray[@]} |  awk '{for(i=1;i<=NF;i++) if($i!~/\-/) print $i}'))
-              [ -z $(echo ${releasesArray[@]}) ]  && 
-                      echo "<<< E:Default entry is not enabled.Re-run with 'default' as ARG1" &&
+              [ -z $(echo ${releasesArray[@]}) ]  && \
+                      echo "<<< E:Default entry is not enabled.Re-run with 'default' as ARG1" && \
 	              exit 1
 
 	     appendSuites=($(echo ${releasesArray[@]} | awk -v append="$2"  '{for(i=1;i<=NF;i++) printf $i"-"append" "  }'))
