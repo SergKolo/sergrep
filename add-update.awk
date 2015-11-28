@@ -90,10 +90,8 @@ BEGIN {
 
     }
 
-
-
     ARGV[ARGC++]="/etc/apt/sources.list";
-    print ARGV[1]
+
     if (ACTION == "enable" ) {
         APPEND="-"SOURCE;
     } else{
