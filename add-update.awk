@@ -46,8 +46,8 @@ function disableSource()
 }
 
 function listStuff () {
-    for(i=4; i<=NF; i++) if ( $i~/#/  ) {break} else {
-            COMPONENTS=COMPONENTS" "$i
+    for(k=4; k<=NF; k++) if ( $k~/#/  ) {break} else {
+            COMPONENTS=COMPONENTS" "$k
         };
     gsub(/\-.*/,"",$3);
     STRING=$1" "$2" "$3APPEND" "COMPONENTS;
@@ -66,30 +66,41 @@ function replaceFile()
 #############
 BEGIN {
 
-    switch ( SOURCE ) {
-    case "update" :
-    case "security" :
-    case "backports" :
-    case "proposed" :
-    case "default":
-        break;
-    default:
-        printUsage();
-        exit
-    }
+# argument checking sequence
+# must remain written in if-else
+# structure rather than case,
+# to consider users who may not be able
+# to install gawk due to broken sources.list
+# which is what this script should be aimed at
 
-    switch ( ACTION  ) {
+# actions checked first so that 
+# help message can be printed 
+ if ( ACTION ==  "enable" ||
+      ACTION == "disable" ||
+      ACTION == "default"  ) {
 
-    case "enable":
-    case "disable":
-    case "default":
-        break;
-    case "help" :
-        printUsage() ;
-        break;
+    print "<<< ACTION ARG OK" 
+  }
+  else if (ACTION == "help" ){
+    printUsage()
+    exit
+  }
 
-    }
 
+  if ( SOURCE == "update" || 
+       SOURCE == "security" || 
+       SOURCE == "backports" || 
+       SOURCE == "proposed" ) { 
+       print "<<< SOURCE ARG OK"
+       
+  }
+   
+   else if ( ACTION != "default"  || ACTION != "help" ) {  
+        print "<<< E: SOURCE ARG INCORRECT"; 
+        printUsage(); 
+        exit 1   }
+
+    # static filename to operate on
     ARGV[ARGC++]="/etc/apt/sources.list";
 
     if (ACTION == "enable" ) {
@@ -138,7 +149,7 @@ END {
        for ( i=1;i<=j;i++  ) print newLines[i] | "sort -u > /tmp/sources.list"
        replaceFile();
      }
-     else if (ACTION == "default" && SOURCE == "default" ){
+     else if (ACTION == "default" ){
         for ( i=1;i<=j;i++  ) print defaultsArray[i] | "sort -i -u > /tmp/sources.list"
         replaceFile();
      }
