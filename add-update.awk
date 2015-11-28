@@ -22,7 +22,7 @@
 # DEALINGS IN THE SOFTWARE.
 
 function printUsage(){
-  print "Usage: sudo ./update.awk -v ACTION=[enable|disable|help] -v SOURCE=[updates|backports|security|proposed]";
+  print "Usage: sudo ./add-update.awk -v ACTION=[enable|disable|help] -v SOURCE=[updates|backports|security|proposed]";
   exit
 }
 
