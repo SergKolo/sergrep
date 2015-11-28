@@ -1,4 +1,25 @@
 #!/usr/bin/awk -f
+#
+###########################################################
+# Author: Serg Kolo
+# Date: Nov 27,2015
+# Purpose: A script that enables/disables 4 ubuntu sources
+# (namely updates, backports, proposed, and security )  
+# much in a way like software-properties-gtk does
+# Written for:  http://paste.ubuntu.com/13434218/
+###########################################################
+#
+# Permission to use, copy, modify, and distribute this software is hereby granted 
+# without fee, provided that  the copyright notice above and this permission statement
+# appear in all copies.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL 
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+# DEALINGS IN THE SOFTWARE.
 
 function printUsage(){
   print "Usage: sudo ./update.awk -v ACTION=[enable|disable|help] -v SOURCE=[updates|backports|security|proposed]";
