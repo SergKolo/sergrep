@@ -78,10 +78,11 @@ BEGIN {
  if ( ACTION ==  "enable" ||
       ACTION == "disable" ||
       ACTION == "default"  ) {
-
+    actionArgs="0"
     print "<<< ACTION ARG OK" 
   }
   else if (ACTION == "help" ){
+    actionArgs="1"
     printUsage()
     exit
   }
@@ -91,14 +92,16 @@ BEGIN {
        SOURCE == "security" || 
        SOURCE == "backports" || 
        SOURCE == "proposed" ) { 
+       sourceArgs="0"
        print "<<< SOURCE ARG OK"
        
   }
    
    else if ( ACTION != "default"  || ACTION != "help" ) {  
+        sourceArgs="1"
         print "<<< E: SOURCE ARG INCORRECT"; 
         printUsage(); 
-        exit 1   }
+        exit    }
 
     # static filename to operate on
     ARGV[ARGC++]="/etc/apt/sources.list";
@@ -139,7 +142,15 @@ $0~/^deb*/ && $0!~/partner/ && $0!~/extra/ {
 }
 
 END {
+
+if ( sourceArgs == "1" || actionArgs == "1" ) 
+{
+ print "<<< Post-processing skipped"
+}
+else {
     print "<<< Script finished processing" ;
+
+
     if ( ACTION =="enable" && ENABLED == 0 ){
      for(i=1;i<=j;i++)
         print ARRAY[i] |  "sort -u > /tmp/sources.list ";
@@ -153,6 +164,7 @@ END {
         for ( i=1;i<=j;i++  ) print defaultsArray[i] | "sort -i -u > /tmp/sources.list"
         replaceFile();
      }
+ }
 }
 
 # END OF MAIN
