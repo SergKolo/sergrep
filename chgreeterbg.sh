@@ -48,6 +48,7 @@ function changeBG
 ###################
 # MAIN
 ###################
+[ $( id -u ) -eq 0 ] || { echo ">>> Error: Must run as root "; printUsage; exit 1;}
 
 [ $# -eq 0 ] && printUsage
 
