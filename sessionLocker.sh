@@ -50,7 +50,7 @@ TIME="30m"
 while [ 1 ]; 
 do
   # Wait the time defined in VARIABLES part and lock the session
-  /bin/sleep $TIME && light-locker-command -l
+  /bin/sleep $TIME &&  qdbus  com.canonical.Unity /com/canonical/Unity/Session com.canonical.Unity.Session.Lock
 
   # Continuously query dbus every 0.25 seconds test whether session is locked
   # Once this sub-loop breaks, the main one can resume the wait and lock cycle.
