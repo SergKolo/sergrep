@@ -78,7 +78,7 @@ class mathApp(QtGui.QWidget):
           correctAnswer = eval(expression)
 
           prompt = QtGui.QInputDialog() 
-          text,ok = prompt.getText(self,'TEST',expression) 
+          text,ok = prompt.getText(self,"Don't think too hard",expression) 
           if ok:
              if int(text) == correctAnswer:                
                 self.showAnswer("CORRECT,YOU ROCK !")
