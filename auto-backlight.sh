@@ -2,9 +2,11 @@
 #
 ###########################################################
 # Author: Serg Kolo , contact: 1047481448@qq.com 
-# Date: February 25th, 2016
-# Purpose: Simple brightness control for Ubuntu Unity
-# Written for: http://askubuntu.com/q/583863/295286
+# Date: February 26 2-16 
+# Purpose: Brightness control that polls for
+#          ac adapter presence. Uses
+# Dependencies: on_ac_power script, dbus, Unity/Gnome 
+# Written for: http://askubuntu.com/q/739617/295286
 # Tested on: Ubuntu 14.04 LTS
 ###########################################################
 # Copyright: Serg Kolo , 2016
@@ -20,38 +22,64 @@
 #     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #     DEALINGS IN THE SOFTWARE.
+set -x
 
-
-# set -x
 ARGV0="$0"
-ARGC="$#"
+ARGC=$#
 
-main ()
+
+main()
 {
-  local DISPLAY=:0 
- getPercentage | setBrightness > /dev/null
- # echo $(getPercentage)
+
+  # defaults
+  local DISPLAY=:0
+  local DECREASE=30
+  local INCREASE=75
+  local RCFILE="$HOME/.auto-brightnessrc"
+  #---
+
+  # Check the settings
+  if [ -f $RCFILE ]
+  then 
+       source $RCFILE 
+  else
+       create_rcfile $DECREASE $INCREASE
+  fi
+  #---
+
+  # now actually test if we're using ac adapter
+  if ! on_ac_power 
+  then 
+        change_brightness $DECREASE
+  # The two lines bellow are optional for 
+  # setting brightness if on AC. remove # 
+  # if you want to use these two
+
+  # else 
+       # change_brightness $INCREASE
+  fi
+
 }
 
-setBrightness()
+change_brightness()
 {
-  local PERCENTAGE
-  read PERCENTAGE
-  [[ -n "$PERCENTAGE"   ]] || exit 1
   dbus-send --session --print-reply\
     --dest=org.gnome.SettingsDaemon.Power\
     /org/gnome/SettingsDaemon/Power \
-    org.gnome.SettingsDaemon.Power.Screen.SetPercentage uint32:"$PERCENTAGE"
+    org.gnome.SettingsDaemon.Power.Screen.SetPercentage uint32:"$1"
 }
 
-getPercentage()
+create_rcfile()
 {
-  local PCT
-  PCT="$(zenity --scale --text='Choose brightness level')" 
-  if [[ -n PCT ]]
-  then
-      echo "${PCT}"
-  fi
+  echo "DECREASE="$1 >  "$RCFILE"
+  echo "INCREASE="$2 >> "$RCFILE"
 }
 
-main
+
+while true
+do
+   main
+   sleep 0.25
+done
+
+
