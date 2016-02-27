@@ -2,7 +2,7 @@
 #
 ###########################################################
 # Author: Serg Kolo , contact: 1047481448@qq.com 
-# Date: February 26 2-16 
+# Date: February 26 2016 
 # Purpose: Brightness control that polls for
 #          ac adapter presence. Uses
 # Dependencies: on_ac_power script, dbus, Unity/Gnome 
@@ -35,7 +35,7 @@ main()
   local DISPLAY=:0
   local DECREASE=30
   local INCREASE=75
-  local RCFILE="$HOME/.auto-brightnessrc"
+  local RCFILE="$HOME/.auto-backlightrc"
   #---
 
   # Check the settings
