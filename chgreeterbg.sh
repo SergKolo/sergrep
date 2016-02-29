@@ -23,7 +23,7 @@
 
 function printUsage
 {
-  printf "\n!!! %s\n" "Usage: sudo script.sh /path/to/image"
+  printf "\n!!! %s\n%s\n" "Usage:" "sudo script.sh /path/to/image"
   exit 1
 }
 
@@ -48,20 +48,32 @@ function changeBG
 ###################
 # MAIN
 ###################
-[ $( id -u ) -eq 0 ] || { echo ">>> Error: Must run as root "; printUsage; exit 1;}
 
-[ $# -eq 0 ] && printUsage
+main()
+{
+   ARGC=$#
+   local IMAGE="$(readlink -e "$@" 2>/dev/null )" 
+         # full path to existing image
+   local ORFILE="/usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override" 
+         # override file for unity greeter glib schema
 
-# override file for unity greeter glib schema
-ORFILE="/usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override"
-# full path to the image
-IMAGE="$(readlink -f "$@")"
+  # check if we're root, else quit
+  [ $( id -u ) -eq 0 ] ||\
+     { echo ">>> Error: Must run as root " > /dev/stderr;\
+      printUsage;}
 
-# make sure image is readable by non-owner
+  # not enought args
+  [ $ARGC -eq 0 ] && \
+         echo ">>> Misssing arguments" > /dev/stderr \
+         && printUsage
+  
+  # make sure image is readable by non-owner
+  chmod +rx "$IMAGE"
 
-chmod +x "$IMAGE"
+  # check if the override file exists, else create it
+  [ -f "$ORFILE" ] || createOR "$ORFILE"
 
-# check if the override file exists, else create it
-[ -f $ORFILE ] || createOR "$ORFILE"
+  changeBG "$IMAGE" "$ORFILE"
+}
 
-changeBG "$IMAGE" "$ORFILE"
+main "$@"
