@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 #
 ###########################################################
 # Author: Serg Kolo , contact: 1047481448@qq.com 
