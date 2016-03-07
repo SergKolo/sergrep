@@ -54,7 +54,7 @@ main()
      exit 1
   fi
 
-  local DATAFILE="/home/xieerqi/.last_brightness"
+  local DATAFILE="/opt/.last_brightness"
   
   if [ "$1" = restore ];then
      restore  $DATAFILE
