@@ -16,6 +16,7 @@
 #           Basic idea is that you must give full path and either store or restore as an option 
 # Written for: http://askubuntu.com/q/739654/295286
 # Tested on:  Ubuntu 14.04 LTS
+# Version: 1.2 , added brightness limit, file creation
 ###########################################################
 # Copyright: Serg Kolo , 2016
 #    
