@@ -34,28 +34,58 @@
 ARGV0="$0"
 ARGC=$#
 
+
+
 store()
 {
-   cat /sys/class/backlight/*/actual_brightness > "$1"
+   cat $SYSDIR/*/actual_brightness > "$1"
 }
+#----------
+
+# This function restores brightness. We avoid 
+# setting brightness to complete 0, hence
+# minimum is 10% that can be restored.
 
 restore()
 {
+  MAX=$(< $SYSDIR/*/max_brightness  )
+  LIMIT=$(($MAX/10)) # get approx 10 percent value
   VAL=$(< "$1" )
-  echo $VAL > /sys/class/backlight/*/brightness
+  if [ $VAL -lt $LIMIT  ] ;
+  then
+       # avoid going bellow 10% of brightness
+       # we don't want user's screen to be completely dark
+       echo $LIMIT > $SYSDIR/*/brightness
+  else
+       echo $VAL > $SYSDIR/*/brightness
+  fi
+}
+#------------
+
+# This function works for initial run of the script; the script cannot set
+# brightness unless datafile exists first, so here we create the file
+# Initial value there will be whatever the current brightness on first
+# reboot was
+
+create_datafile()
+{
+  cat $SYSDIR/*/actual_brightness > $1 
 }
 
 main()
 {
+  local DATAFILE="/opt/.last_brightness"
+  local SYSDIR="/sys/class/backlight" # sysfs location of all the data
 
-
+  # Check pre-conditions for running the script
   if [ $ARGC -ne 1  ] || [ $(id -u) -ne 0 ]   ; then
-     echo "ERR"
      exit 1
   fi
 
-  local DATAFILE="/opt/.last_brightness"
+  # ensure datafile exists
+  [ -f $DATAFILE  ] || create_datafile $DATAFILE
   
+  # perform storing or restoring function
   if [ "$1" = restore ];then
      restore  $DATAFILE
   else
