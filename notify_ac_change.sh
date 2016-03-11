@@ -28,7 +28,6 @@
 ARGV0="$0"
 ARGC=$#
 
-DISPLAY=:0
 on_ac_power
 FLAG=$?
 while true
@@ -42,9 +41,9 @@ do
    else
         if [ $STATUS -eq 0 ]
         then
-           notify-send 'AC adapter connected'
+           DISPLAY=:0 notify-send 'AC adapter connected'
         else
-           notify-send 'AC adapter disconnected'
+           DISPLAY=:0 notify-send 'AC adapter disconnected'
         fi
         FLAG=$STATUS
    fi
