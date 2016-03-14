@@ -9,7 +9,7 @@
 # 
 # Written for: http://askubuntu.com/q/542986/295286
 # Tested on: Ubuntu 14.04 LTS
-# Version: 0.1
+# Version: 0.2
 ###########################################################
 # Copyright: Serg Kolo , 2016
 #    
@@ -24,29 +24,51 @@
 #     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #     DEALINGS IN THE SOFTWARE.
-
+#set -x
 ARGV0="$0"
 ARGC=$#
 
-on_ac_power
-FLAG=$?
-while true
-do
-   on_ac_power
-   STATUS=$?
+test_presence()
+{
+  on_ac_power
+  echo $?
+}
 
-   if [ $STATUS -eq $FLAG   ]
+notify_change()
+{
+   pgrep -f '/usr/bin/X' > /dev/null && GUI=true
+   connected='AC adapter connected'
+   disconnected='AC adapter disconnected'
+
+   if [ $1 -eq 0 ]
    then
-        continue
+           wall <<< $connected        
+           $GUI && DISPLAY=:0 notify-send 'AC adapter connected'
+           
    else
-        if [ $STATUS -eq 0 ]
-        then
-           DISPLAY=:0 notify-send 'AC adapter connected'
-        else
-           DISPLAY=:0 notify-send 'AC adapter disconnected'
-        fi
-        FLAG=$STATUS
+           wall <<< $connected
+           $GUI && DISPLAY=:0 notify-send 'AC adapter disconnected'
    fi
-sleep 0.25
-done
-   
+}
+
+main()
+{
+  FLAG=$(test_presence)
+
+  while true
+  do
+     STATUS=$(test_presence)
+
+     if [ $STATUS -eq $FLAG   ]
+     then
+        continue
+     else
+        notify_change $STATUS
+        FLAG=$STATUS
+     fi
+
+  sleep 3 #0.25
+  done
+}  
+
+main 
