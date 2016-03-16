@@ -19,8 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 # DEALINGS IN THE SOFTWARE.
-
-
+set -x
 function printUsage
 {
   printf "\n!!! %s\n%s\n" "Usage:" "sudo script.sh /path/to/image"
@@ -76,7 +75,7 @@ main()
 
   # actually change greeter background
   changeBG "$IMAGE" "$ORFILE"
-  if [ $? -eq 0  ] && [ -z $ARGV   ];then
+  if [ $? -eq 0  ] && [ -z "$ARGV"   ];then
      zenity --info --text="Done. Preview changes with dm-tool switch-to-greeter command"
   fi
 }
@@ -88,7 +87,7 @@ else
   if [ $# -eq 0   ];then
      zenity --password | sudo -S "$(readlink -e  $0)"  || exit 1
   else
-       sudo "$(readlink -e $0)" "$(readlink -q -e $@)"
+       sudo "$(readlink -e $0)" "$(readlink -q -e "$@" )"
   fi
 fi
 
