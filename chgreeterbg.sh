@@ -37,8 +37,9 @@ function createOR
 
 function changeBG
 {
-   printf "Changing background to $1\n"
-   sed -i "s;background=.*;background=\'"$1"\';g" "$2"
+   new_image="'$1'"
+   printf "Changing background to $new_image\n"
+   sed -i 's;background=.*;background='"$new_image"';g' "$2"
    printf "Recompiling schemas\n"
    glib-compile-schemas /usr/share/glib-2.0/schemas/  
    printf "Done. Preview changes with dm-tool switch-to-greeter command"
@@ -52,21 +53,20 @@ function changeBG
 main()
 {
    ARGC=$#
-   local IMAGE="$(readlink -e "$@" 2>/dev/null )" 
+   ARGV="$@"
+   local IMAGE="$(readlink -e "$ARGV" 2>/dev/null )" 
          # full path to existing image
    local ORFILE="/usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override" 
          # override file for unity greeter glib schema
 
-  # check if we're root, else quit
-  [ $( id -u ) -eq 0 ] ||\
-     { echo ">>> Error: Must run as root " > /dev/stderr;\
-      printUsage;}
+   if [ -z $ARGV ];then 
+       IMAGE="$(zenity --file-selection --filename='/home' )"
+   fi
 
-  # not enought args
-  [ $ARGC -eq 0 ] && \
-         echo ">>> Misssing arguments" > /dev/stderr \
-         && printUsage
-  
+   if [ -z $IMAGE ];then
+      exit 1
+   fi
+
   # make sure image is readable by non-owner
   chmod +rx "$IMAGE"
 
@@ -76,4 +76,16 @@ main()
   changeBG "$IMAGE" "$ORFILE"
 }
 
-main "$@"
+# check if we're root, else quit
+if [ $( id -u ) -eq 0 ];then
+     main "$@" 
+else
+  if [ $# -eq 0   ];then
+     zenity --password | sudo -S $(readlink -e  $0)  || exit 1
+  else
+       sudo $(readlink -e $0) "$(readlink -q -e $@)"
+  fi
+fi
+
+
+
