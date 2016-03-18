@@ -9,6 +9,8 @@
 #	are running. 
 # TESTED ON: 14.04.3 LTS, Trusty Tahr
 # WRITTEN FOR: http://askubuntu.com/q/702156/295286
+# VERSION: 2, removed xdotool, using dbus method
+#          changed to C-style of organizing code
 #########################
 
 # Copyright (c) 2015 Serg Kolo
@@ -31,7 +33,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Uncomment the line bellow if needed for debugging
- set -x
+# set -x
 ###########################
 # VARIABLES
 ###########################
@@ -54,11 +56,11 @@ DISPLAY=:0 # has to be set since we are using notify-send
 # The output that contains the string we need, hence the case...esac
 # structure employed here. Once we get the proper message.
 # we check whether update-manager or package managers are running
-# If there is one instance, then simulate pressing Escape key twice
+# If there is one instance, then call CancelAction method
 # and send notification to the user.
-# 	Both dbus-monitor and while loop run continuously, so this
+# 	Both dbus-monitor and while loop run continuously. This
 # can be launcher as script in `/etc/rc.local` or `/etc/rc2.d`
-# or preferably in `/etc/xdg/autostart/` . 
+# or preferably (!) in `/etc/xdg/autostart/` . 
 # 	Here is sample /etc/xdg/autostart/preventShutdown.desktop file
 # 
 # [Desktop Entry]
@@ -75,21 +77,27 @@ DISPLAY=:0 # has to be set since we are using notify-send
 # Make sure to edit $HOME/.profile file to include that into $PATH
 # variable
 
+interupt()
+{
+ qdbus com.canonical.Unity /com/canonical/Unity/Session com.canonical.Unity.Session.CancelAction
+ notify-send "<<< UPDATE IN PROGRESS; DO NOT SHUT DOWN>>>"
+ wall <<< "<<< UPDATE IN PROGRESS; DO NOT SHUT DOWN>>>"
+}
 
-
-dbus-monitor --profile "interface='com.canonical.Unity.Session',member='RebootRequested'" |
-while read -r line;
-do
+main()
+{
+ dbus-monitor --profile "interface='com.canonical.Unity.Session',type=signal" |
+ while read -r line;
+ do
   case "$line" in
    *RebootRequested*)
        pgrep update-manager || pgrep apt-get || pgrep dpkg
-
 	if [ $? -eq 0 ]; then
-            xdotool key Escape
-            xdotool key Escape
-            notify-send "<<< UPDATE IN PROGRESS; DO NOT SHUT DOWN>>>"
-            wall <<< "<<< UPDATE IN PROGRESS; DO NOT SHUT DOWN>>>"
+           interupt
         fi
      ;;
-  esac
-done
+   esac
+ done
+}
+
+main
