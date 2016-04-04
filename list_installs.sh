@@ -1,12 +1,39 @@
+#!/usr/bin/env bash
+#
+###########################################################
+# Author: Serg Kolo , contact: 1047481448@qq.com 
+# Date: April 4, 2016
+# Purpose: filtering installation attempts
+# Written for:
+# Tested on:  Ubuntu 14.04 LTS
+###########################################################
+# Copyright: Serg Kolo , 2016
+#    
+#     Permission to use, copy, modify, and distribute this software is hereby granted
+#     without fee, provided that  the copyright notice above and this permission statement
+#     appear in all copies.
+#
+#     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+#     THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#     DEALINGS IN THE SOFTWARE.
+
+ARGV0="$0"
+ARGC=$#
 print_usage()
 {
-  cat << EOF
+cat << EOF
 Usage: list_installs.sh [-c] [-g]  [-u username] [-h]
 
 The script parses authentication logs and filters 
-installer actions based on whether they've been
+installation attempts based on whether they've been
 done through gui, command-line, or particular 
-user.
+user. Note that it lists all attempts at authentica-
+tion for software installation. It doesn't show
+whether or not the installation succeeded.
 
 Installations done via gui tools typically use
 polkit, so entries don't show exact item that
@@ -14,6 +41,12 @@ has been installed, only the tool used -
 /usr/bin/software-center for example. Hence,
 date-stamps still have to be cross checked with 
 apt history logs
+
+Note that authentication logs (auth.log) are
+rotated as outlined in /etc/logrotate.conf ,
+typically every 4 weeks. This may need to be
+tuned by your system's administrator to list
+installs over longer periods of time
 EOF
 
 }
