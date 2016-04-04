@@ -52,7 +52,7 @@ EOF
 }
 dump_logs()
 {
-  find /var/log/auth.log.*.gz | sort  -r | xargs zcat > "$1" 
+  find /var/log/auth.log.*.gz | sort  -r -V | xargs zcat > "$1" 
   cat /var/log/auth.log >> "$1"
 }
 
@@ -125,7 +125,6 @@ main()
   dump_logs "$DUMPFILE"
   generate_report  "$DUMPFILE"
   parse_args "$@"  
-
   rm "$DUMPFILE"
 }
 main "$@"
