@@ -33,7 +33,7 @@ main()
     if [ $num -eq 16777215 ]
        then num=0
     fi
-    sleep 0.1
+    sleep 0.05
     done
 }
 
