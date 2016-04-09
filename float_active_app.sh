@@ -26,13 +26,18 @@ ARGV0="$0"
 ARGC=$#
 get_active_app()
 {
-qdbus org.ayatana.bamf /org/ayatana/bamf/matcher org.ayatana.bamf.matcher.ActiveApplication 
+  qdbus org.ayatana.bamf /org/ayatana/bamf/matcher \
+      org.ayatana.bamf.matcher.ActiveApplication 
 }
 
 get_active_desktop_file()
 {
-  qdbus org.ayatana.bamf $(get_active_app) org.ayatana.bamf.application.DesktopFile | \
-awk -F '/' '{print "application://"$NF}'
+  active_app=$(get_active_app)
+  if [ -n "$active_app"  ];then
+     qdbus org.ayatana.bamf "$active_app" \
+        org.ayatana.bamf.application.DesktopFile | \
+        awk -F '/' '{print "application://"$NF}'
+  fi
 }
 
 get_launcher_items()
@@ -43,7 +48,7 @@ get_launcher_items()
 
 make_new_list()
 {
- active="'$(get_active_desktop_file)'"
+ 
  array=( $( get_launcher_items ) )
  printf "%s, " "$active"
  COUNT=0
@@ -69,8 +74,13 @@ set_launcher_items()
 
 main()
 {
+  local active=""
   while true;
-  do
+  do 
+    active="'$(get_active_desktop_file)'"
+    if [ "$active" = "'application://compiz.desktop'" ] || [ -z "$active"   ] ;then
+       continue
+    fi
     new_list="[$(make_new_list)]"
     set_launcher_items "$new_list"
   sleep 0.25
