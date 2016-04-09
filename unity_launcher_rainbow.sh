@@ -24,7 +24,7 @@ ARGV0="$0"
 ARGC=$#
 main()
 {
-  renice -n 10 $$
+  renice -n 10 $$ > /dev/null
   num=0;
   while true
   do 
@@ -39,10 +39,10 @@ main()
 
 set_unity_launcher_color()
 {
-  key="/org/compiz/profiles/unity/plugins/unityshell/background-color"
-  hex_string=\'\#$1\'
-#  echo $hex_string
-  dconf write "$key" "$hex_string"
+  schema="org.compiz.unityshell" # relocatable schema
+  path="/org/compiz/profiles/unity/plugins/unityshell/" #must end with /
+  key="background-color"
+  hex_string=$1
+  gsettings set "$schema":"$path" "$key"  "'#$hex_string'"
 }
-
 main
