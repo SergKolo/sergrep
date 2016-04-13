@@ -108,8 +108,6 @@ main()
      case "$line" in
        *FocusedWindowChanged*) check_active_app ;;
      esac
-     #check_active_app 
-     #sleep 0.25
   done
 }
 
