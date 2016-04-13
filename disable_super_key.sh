@@ -53,21 +53,36 @@ get_active_app_name()
 
 check_active_app()
 {
-active_name=$(get_active_app_name)
-#echo $active_name and  $1
-case "$active_name" in
-  "$1") disable_dash_key ;;
-   *) enable_dash_key ;;
-esac
+  active_name=$(get_active_app_name)
+  local is_found
+  for win in  "${windows_list[@]}"
+  do
+    if [ "$active_name" = "$win" ] ; then
+      is_found=true
+      break
+    else
+      is_found=false
+    fi
+  done
+
+  if $is_found ; then
+     echo "$active_name"
+     disable_dash_key
+  else
+     enable_dash_key
+  fi
 }
+
 
 main()
 {
-while true 
-do
-  check_active_app "$1"
-  sleep 0.25
-done
+  local windows_list
+  windows_list=( "$@" )
+  while true 
+  do
+     check_active_app 
+     sleep 0.25
+  done
 }
 
 main "$@"
