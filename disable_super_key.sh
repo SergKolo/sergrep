@@ -66,7 +66,6 @@ check_active_app()
   done
 
   if $is_found ; then
-     echo "$active_name"
      disable_dash_key
   else
      enable_dash_key
@@ -74,14 +73,43 @@ check_active_app()
 }
 
 
+print_usage()
+{
+cat << EOF
+Copyright Serg Kolo , 2016
+
+Usage: disable_super_key.sh 'App Name 1' [ 'App Name 2' 'App Name 3' ...  ]
+
+The script disables the Super key for the specified set of applications
+under Ubuntu's Unity environment. The list of windows must be space
+separated, each app name single quoted and exactly as it appears on the
+launcher (or as it appears in the .desktop file of that app), so spelling
+and spacing matter.
+
+Note that the script only disables the Super key as shortcut for Dash.
+The user still will be able to invoke Dash by manually clicking on the 
+Ubuntu icon in the launcher
+EOF
+}
+
 main()
 {
+
+  if [ $ARGC -eq 0   ]; then
+     print_usage
+     exit
+  fi
+
   local windows_list
   windows_list=( "$@" )
-  while true 
+  dbus-monitor --profile "type='signal',member='FocusedWindowChanged'" |\
+  while read line
   do
-     check_active_app 
-     sleep 0.25
+     case "$line" in
+       *FocusedWindowChanged*) check_active_app ;;
+     esac
+     #check_active_app 
+     #sleep 0.25
   done
 }
 
