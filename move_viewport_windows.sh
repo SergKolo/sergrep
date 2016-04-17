@@ -33,11 +33,12 @@ get_screen_geometry()
 }
 
 current_wins()
-{
-   wmctrl -lG | \
+{  
+   HEX="$(wmctrl -lG | \
    awk -v xlim="$XMAX" -v ylim="$YMAX" \
-      '$3>0 && $3<xlim  && $4>0 && $4<ylim \
-      {winid=sprintf("%d",strtonum($1));$1=winid;print}'
+      'BEGIN{printf "ibase=16;"} $3>0 && $3<xlim  && $4>0 && $4<ylim \
+      { gsub(/0x/,""); printf "%s;",toupper($1)  } ')"
+   echo $HEX | bc | tr '\n' ' '
 }
 
 gui_selection()
@@ -60,8 +61,7 @@ gui_selection()
  width=$(($width+$swidth))
  done
 
- zenity --list --radiolist --column="" --column "CHOICE" ${array[@]} --width 350 --height 350
-
+ zenity --list --radiolist --column="" --column "CHOICE" ${array[@]} --width 350 --height 350 2> /dev/null
 }
 
 print_usage()
@@ -105,6 +105,7 @@ parse_args()
      v) NEWVP=${OPTARG}
         ;;
      g) NEWVP="$(gui_selection | tr 'x' ' ' )"
+        [ -z "$NEWVP" ] && exit 1
         ;;
      f) FOLLOW=true
         ;; 
@@ -138,8 +139,8 @@ main()
  parse_args "$@"
 
  read XMAX YMAX  <<< "$(get_screen_geometry)" # move to getopts
-
- windows=( $(current_wins | awk '{ printf "%s ",$1 }') )
+ 
+ windows=( $(current_wins) )
 
  xdotool set_desktop_viewport 0 0 
  for win in ${windows[@]} ; do
@@ -158,5 +159,5 @@ main()
  notify-send "current viewport is $(get_active_viewport | awk -F '=' '{sub(/,/," ");print $2}' )"
  exit 0
 }
-
 main "$@"
+
