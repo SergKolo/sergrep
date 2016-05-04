@@ -89,7 +89,11 @@ class mathApp(QtGui.QWidget):
 
           if done==True:
               self.close()
-          time.sleep(sleepTime)
+          # Prevent IOError
+          if sleepTime <= 0:
+            time.sleep(1)
+          else:
+            time.sleep(sleepTime)
       
 
    def generateOperation(self,start,end):
@@ -98,6 +102,11 @@ class mathApp(QtGui.QWidget):
       oplist = ['+','-','/','*']
       op = oplist[random.randint(0,3)]
       expr = str(a) + op + str(b) + ''
+      # Prevent a ZeroDivisionError
+      if b == 0 and op == '/':
+        oplist = ['+','-','*']
+        op = oplist[random.randint(0,2)]
+        expr = str(a) + op + str(b) + '' 
       return expr
 
    def showAnswer(self,result):
