@@ -25,29 +25,40 @@ ARGV0="$0"
 ARGC=$#
 
 mute_notifications()
-{
-  killall notify-osd 2> /dev/null # ensure we have PID
-  notify-send 'All notifications will be muted after this one' 
-  sleep 1
-  while true 
-  do 
-     PID=$(pgrep notify-osd)
-     [  "x$PID" != "x" ]  && 
-     kill -TERM $PID
-  done
+{ 
+  set -x
+  self=${ARGV0##*/}
+  CHECK_PID_NUMS=$(pgrep -f  "$self -m" | wc -l )
+  if [ "$CHECK_PID_NUMS" -gt 2 ]; then
+     zenity --info --text "Notifications already disabled"
+     exit 0
+  else  
+     killall notify-osd 2> /dev/null # ensure we have PID
+     notify-send 'All notifications will be muted after this one' 
+     sleep 1
+     while true 
+     do 
+        PID=$(pgrep notify-osd)
+        [  "x$PID" != "x" ]  && 
+        kill -TERM $PID 
+     done
+  fi
 }
 
 unmute()
 {
+  echo $0
   self=${0##*/}
   
   MUTE_PID=$(pgrep -f  "$self -m" ) #match self with -m option
   if [ "x$MUTE_PID" != "x"   ];then
-     kill -TERM "$MUTE_PID"
-     sleep 1 # ensure the previous process exits
+     kill -TERM "$MUTE_PID" &&
+     sleep 1 && # ensure the previous process exits
      notify-send "UNMUTED"
+     exit 0
   else 
-     notify-send "NOT MUTED"
+     notify-send "NOTIFICATIONS ALREADY UNMUTED"
+     exit 0
   fi  
 }
 
