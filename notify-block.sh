@@ -26,7 +26,7 @@ ARGC=$#
 
 mute_notifications()
 { 
-  set -x
+  
   self=${ARGV0##*/}
   CHECK_PID_NUMS=$(pgrep -f  "$self -m" | wc -l )
   if [ "$CHECK_PID_NUMS" -gt 2 ]; then
@@ -41,6 +41,7 @@ mute_notifications()
         PID=$(pgrep notify-osd)
         [  "x$PID" != "x" ]  && 
         kill -TERM $PID 
+        sleep 0.25
      done
   fi
 }
