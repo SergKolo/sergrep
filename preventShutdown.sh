@@ -77,7 +77,7 @@ DISPLAY=:0 # has to be set since we are using notify-send
 # Make sure to edit $HOME/.profile file to include that into $PATH
 # variable
 
-interupt()
+interrupt()
 {
  qdbus com.canonical.Unity /com/canonical/Unity/Session com.canonical.Unity.Session.CancelAction
  notify-send "<<< UPDATE IN PROGRESS; DO NOT SHUT DOWN>>>"
@@ -93,7 +93,7 @@ main()
    *RebootRequested*)
        pgrep update-manager || pgrep apt-get || pgrep dpkg
 	if [ $? -eq 0 ]; then
-           interupt
+           interrupt
         fi
      ;;
    esac
