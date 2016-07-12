@@ -29,12 +29,6 @@ import sys
 import os
 import getpass
 
-def run_sh(cmd):
-    # run shell commands, return stdout
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    out = p.stdout.read().strip()
-    return out 
-
 def extract_command(desktop_file):
     # read .desktop file , return command it  runs
     command=""
@@ -81,33 +75,42 @@ def set_as_default( mime , desk_file  ):
 def main():
     
     # Open file dialog, let user choose program by its .desktop file
-    filepath = run_sh('zenity --file-selection --file-filter="*.desktop" \
-                              --filename="/usr/share/applications/" ')
-    if filepath == "" :
-       sys.exit(1)
+    try:
+        filepath = subprocess.check_output([
+                   'zenity', '--file-selection',
+                   '--file-filter=' + '*.desktop',
+                   '--filename=/usr/share/applications/' 
+                    ] ).strip()
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+
     
     # Get the program user wants to run
     program = extract_command(filepath)
     
     # Find out the mimetype of the file user wants opened
-    mime_type = run_sh("file --mime-type " \
-                       + sys.argv[1]  ).split(':')[1].strip()
+    mime_type = subprocess.check_output([
+                          'file', '--mime-type', sys.argv[1] 
+                          ]).strip().split(':')[1].strip()
+    print mime_type
     
     # Extract just the .desktop filename itself
     desktop_file = filepath.split('/')[-1]
     
     # Check if user wants this program as default
-    return_code = subprocess.call( [ 'zenity', '--question', '--title=""',
+    try:
+        subprocess.check_call( [ 'zenity', '--question', '--title=""',
                       '--text="Would you like to set this app as' + \
                        ' default for this filetype?"'])
     
-    if return_code == 0 :
-       set_as_default( mime_type , desktop_file )
+    except subprocess.CalledProcessError :
+           	pass
+    else:
+         set_as_default( mime_type , desktop_file )
     
     # Finally, launch the program with file user chose
     # Can't use run_sh() because it expects stdout
-    proc = subprocess.Popen( "nohup " + program + " " + sys.argv[1] \
-                             + " &> /dev/null &" , shell=True)
+    proc = subprocess.Popen( program + " " + sys.argv[1] , shell=True)
        
 if __name__ == "__main__" :
     main()
