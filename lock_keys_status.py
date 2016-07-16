@@ -43,12 +43,21 @@ def run_cmd(cmdlist):
             return  stdout
 
 def key_status():
+    label = ""
     status = []
+    keys = { '3':'C', '7':'N', '11':'S' }
+
     for line in run_cmd( ['xset','q'] ).split("\n") :
         if "Caps Lock:" in line:
             status = line.split()
 
-    return status[3] + " " + status[7] + " " + status[11]
+    for index in 3,7,11:
+        if status[index] == "on" :
+           label = label + " [" +  keys[ str(index)  ] + "] " 
+        else:
+           label = label + keys[ str(index) ]
+
+    return label
 
 def update_label():
      app.set_label( key_status() )
