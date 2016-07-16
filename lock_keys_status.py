@@ -1,4 +1,28 @@
 #!/usr/bin/env python
+#
+###########################################################
+# Author: Serg Kolo , contact: 1047481448@qq.com 
+# Date: July 16,2012
+# Purpose: Simple indicator of Caps, Num, and Scroll Lock
+#          keys for Ubuntu
+# 
+# Written for: http://askubuntu.com/q/796985/295286
+# Tested on: Ubuntu 16.04 LTS
+###########################################################
+# Copyright: Serg Kolo , 2016
+#    
+#     Permission to use, copy, modify, and distribute this software is hereby granted
+#     without fee, provided that  the copyright notice above and this permission statement
+#     appear in all copies.
+#
+#     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+#     THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#     DEALINGS IN THE SOFTWARE.
+
 
 import glib
 import subprocess
