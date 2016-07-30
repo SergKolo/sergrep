@@ -6,7 +6,7 @@ from gi.repository import GdkX11, Gdk, Gtk
 
 def main():
 
-    DEBUG = True
+    DEBUG = False
 
     screen = GdkX11.X11Screen.get_default()
     monitors = []
