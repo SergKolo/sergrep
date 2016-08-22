@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
 # DEALINGS IN THE SOFTWARE.
-set -x
+#set -x
 function printUsage
 {
   printf "\n!!! %s\n%s\n" "Usage:" "sudo script.sh /path/to/image"
@@ -32,7 +32,7 @@ function createOR
   { printf "%s\n" "[com.canonical.unity-greeter]" ;
     printf "%s\n" "draw-user-backgrounds=false" ;
     printf "%s\n" "background=" ;
-  } >> "$1"
+  } > "$1"
 }
 
 function changeBG
@@ -56,7 +56,7 @@ main()
    ARGV="$*"
    local IMAGE="$(readlink -e "$ARGV" 2>/dev/null )" 
          # full path to existing image
-   local ORFILE="/usr/share/glib-2.0/schemas/10_unity_greeter_background.gschema.override" 
+   local ORFILE="/usr/share/glib-2.0/schemas/99_unity_greeter_background.gschema.override" 
          # override file for unity greeter glib schema
 
    if [ -z $ARGV ];then 
@@ -68,10 +68,11 @@ main()
    fi
 
   # make sure image is readable by non-owner
-  chmod +rx "$IMAGE"
+  chmod +r "$IMAGE"
 
   # check if the override file exists, else create it
-  [ -f "$ORFILE" ] || createOR "$ORFILE"
+  #[ -f "$ORFILE" ] || 
+  createOR "$ORFILE"
 
   # actually change greeter background
   changeBG "$IMAGE" "$ORFILE"
