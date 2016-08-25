@@ -40,7 +40,9 @@ from gi.repository import Gio,Gdk
 from time import sleep
 import subprocess
 import argparse 
+import signal
 import os
+import sys
 
 """Set debug=True to see errors and verbose output"""
 debug=False
@@ -135,7 +137,7 @@ def main():
        try:
            if current_vp_number in workspaces:
                if not pid:
-                   proc = subprocess.Popen(args.command,shell=True)
+                   proc = subprocess.Popen("exec " + args.command,shell=True)
                    pid = proc.pid
                    if debug: print('PID:',pid,'Spawned:',args.command)
            else:
@@ -147,7 +149,6 @@ def main():
        except:
              if debug: print("Unexpected error:", sys.exc_info()[0])
              if proc:
-                proc.terminate()
-           
+                proc.terminate() 
 if __name__ == '__main__':
     main()

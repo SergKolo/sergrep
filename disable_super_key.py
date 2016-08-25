@@ -31,7 +31,7 @@ import signal
 import time
 import sys
 
-debug = False
+debug = True
 
 def gsettings_get(schema,path,key):
     """ fetches value of gsettings schema"""
@@ -104,7 +104,6 @@ def sigterm_handler(*args):
     gsettings_reset( 'org.compiz.unityshell', 
                      '/org/compiz/profiles/unity/plugins/unityshell/',
                      'show-launcher')
-    
     if debug: print('CAUGHT SIGTERM')
     sys.exit(0)
 
