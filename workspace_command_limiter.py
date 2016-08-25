@@ -4,7 +4,6 @@
 Author: Serg Kolo , contact: 1047481448@qq.com 
 Date: August 9th, 2016
 Purpose: Runs user-requested command only on specific workspaces
-Written for: http://askubuntu.com/q/56367/295286
 Tested on: Ubuntu 16.04 LTS , Unity desktop
 
 
