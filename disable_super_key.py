@@ -22,16 +22,19 @@
 #     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #     DEALINGS IN THE SOFTWARE.
-
+from __future__ import print_function
 import gi
 gi.require_version('Gdk', '3.0')
 from gi.repository import  Gdk,Gio
 import subprocess
+import signal
 import time
+import sys
 
 debug = False
 
 def gsettings_get(schema,path,key):
+    """ fetches value of gsettings schema"""
     if path is None:
         gsettings = Gio.Settings.new(schema)
     else:
@@ -39,6 +42,7 @@ def gsettings_get(schema,path,key):
     return gsettings.get_value(key)
 
 def gsettings_set(schema,path,key,value):
+    """ sets value of gsettings schema """
     if path is None:
         gsettings = Gio.Settings.new(schema)
     else:
@@ -47,6 +51,7 @@ def gsettings_set(schema,path,key,value):
 
 
 def gsettings_reset(schema,path,key):
+    """ resets schema:key value to default"""
     if path is None:
         gsettings = Gio.Settings.new(schema)
     else:
@@ -54,6 +59,7 @@ def gsettings_reset(schema,path,key):
     return gsettings.reset(key)
 
 def run_cmd(cmdlist):
+    """ reusable function for running shell commands"""
     try:
         stdout = subprocess.check_output(cmdlist)
     except subprocess.CalledProcessError:
@@ -64,6 +70,7 @@ def run_cmd(cmdlist):
 
 
 def main():
+    """ defines entry point of the program """
     screen = Gdk.Screen.get_default()
     while True:
         
@@ -73,7 +80,7 @@ def main():
         active_xid = str(screen.get_active_window().get_xid())
         wm_state =  run_cmd( ['xprop', '-root', '-notype','-id',active_xid, '_NET_WM_STATE'])  
         
-        if debug : print key_state,wm_state
+        if debug : print(key_state,wm_state)
 
         if 'FULLSCREEN' in wm_state:
             if "Super" in  key_state:    
@@ -92,5 +99,16 @@ def main():
         time.sleep(0.25)
 
 
+def sigterm_handler(*args):
+    """ ensures that Super key has been reset upon exit"""
+    gsettings_reset( 'org.compiz.unityshell', 
+                     '/org/compiz/profiles/unity/plugins/unityshell/',
+                     'show-launcher')
+    
+    if debug: print('CAUGHT SIGTERM')
+    sys.exit(0)
+
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGTERM,sigterm_handler)
     main()
