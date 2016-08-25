@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Author: Serg Kolo , contact: 1047481448@qq.com 
-Date: August 9th, 2016
+Date: August 24th, 2016
 Purpose: Runs user-requested command only on specific workspaces
 Tested on: Ubuntu 16.04 LTS , Unity desktop
-
 
 The MIT License (MIT)
 
@@ -121,11 +120,13 @@ def parse_args():
 
 
 def main():
+   """ Defines entry point of the program """
    args = parse_args()
    workspaces = [ int(wp) for wp in args.workspaces.split(',') ]
    if debug: print('User requested workspaces:',workspaces)
    pid = None
    proc = None
+
    while True:
        sleep(0.25)
        viewports_dict=enumerate_viewports()
