@@ -31,7 +31,7 @@ import signal
 import time
 import sys
 
-debug = True
+debug = False
 
 def gsettings_get(schema,path,key):
     """ fetches value of gsettings schema"""
