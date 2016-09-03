@@ -80,6 +80,13 @@ def parse_args():
                                 help='Time length in seconds per image',
                                 required=True
                                 )
+
+        arg_parser.add_argument(
+                                '-o','--overlay', 
+                                action='store_true',
+                                help='Enables use of overlay transition',
+                                required=False
+                                )
         return arg_parser.parse_args()
         
 
@@ -90,7 +97,8 @@ def main():
     xml_file = os.path.join(os.path.expanduser('~'),'.local/share/slideshow.xml')
     path = os.path.abspath(args.directory)
     duration = args.length
-    transition = args.transition
+    transition_time = args.transition
+
     if not os.path.isdir(path):
        print(path," is not a directory !")
        sys.exit(1)
@@ -112,9 +120,12 @@ def main():
         image = ET.SubElement(root, "static")
         ET.SubElement(image,"duration").text = str(duration)
         ET.SubElement(image,"file").text = previous
-    
-        transition = ET.SubElement(root,"transition")
-        ET.SubElement(transition,"duration").text = str(transition)
+  
+        if args.overlay: 
+            transition = ET.SubElement(root,"transition",type='overlay')
+        else:
+            transition = ET.SubElement(root,"transition")
+        ET.SubElement(transition,"duration").text = str(transition_time)
         ET.SubElement(transition, "from").text = previous
         ET.SubElement(transition, "to").text = img
     
