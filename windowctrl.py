@@ -185,10 +185,17 @@ def parse_args():
     info="""Copyright 2016. Sergiy Kolodyazhnyy.
 
     Window control for terminal emulators. Originally written
-    for gnome-terminal but can be used with any other terminal
-    emulator that conforms to gnome-terminal keybidnings.
-    This can potentially be used for other windows as well via
-    shortcut keybindings."""
+    for gnome-terminal under Ubuntu with Unity desktop but can 
+    be used with any other terminal emulator that conforms to 
+    gnome-terminal keybindings. It can potentially be used for 
+    controlling other windows as well via binding this script
+    to a keyboard shortcut.
+
+    Note that --viewport and --tab options require xdotool to be
+    installed on the system. If you don't have it installed, you 
+    can still use the other options. xdotool can be installed via
+    sudo apt-get install xdotool.
+    """
     arg_parser = argparse.ArgumentParser(
                  description=info,
                  formatter_class=argparse.RawTextHelpFormatter)
