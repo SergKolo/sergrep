@@ -29,7 +29,7 @@ def is_behind(cwd):
     """
     fetch = run_cmd(['git','fetch','origin','master'],cwd)
     status = run_cmd(['git','status'],cwd)
-    if 'Your branch is behind' in status:
+    if 'Your branch is behind' in status.decode():
         return True
 
 def update(cwd):
