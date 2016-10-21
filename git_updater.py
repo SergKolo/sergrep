@@ -34,10 +34,10 @@ def is_behind(cwd):
 
 def update(cwd):
     print('> previous commit:')
-    print(run_cmd(['git','--no-pager','log','-1'],cwd))
-    print(run_cmd(['git','pull'],cwd))
+    print(run_cmd(['git','--no-pager','log','-1'],cwd).decode())
+    print(run_cmd(['git','pull'],cwd).decode())
     print('> latest commit:')
-    print(run_cmd(['git','--no-pager','log','-1'],cwd))
+    print(run_cmd(['git','--no-pager','log','-1'],cwd).decode())
 
 def main():
     root_dir = os.path.join(os.path.expanduser('~'),'bin/')
