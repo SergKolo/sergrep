@@ -27,6 +27,7 @@ def is_behind(cwd):
     """ simple wrapper for checking
         git status output
     """
+    fetch = run_cmd(['git','fetch','origin','master'],cwd)
     status = run_cmd(['git','status'],cwd)
     if 'Your branch is behind' in status:
         return True
