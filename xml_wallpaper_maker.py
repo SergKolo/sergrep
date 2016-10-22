@@ -93,7 +93,7 @@ def parse_args():
         arg_parser.add_argument(
                                 '-s','--size', 
                                 type=str,
-                                help='wallpaper,zoom,centered,scaled,stretched,or spaned',
+                                help='wallpaper,zoom,centered,scaled,stretched,or spanned',
                                 default='scaled',
                                 required=False
                                 )
