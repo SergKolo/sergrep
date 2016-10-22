@@ -61,7 +61,7 @@ def parse_args():
 
         arg_parser.add_argument(
                                 '-d', '--directory',
-                                help='Directory where images stored',
+                                help='Directory where images stored. Required',
                                 type=str,
                                 required=True
                                 )
@@ -69,22 +69,32 @@ def parse_args():
         arg_parser.add_argument(
                                 '-t','--transition', 
                                 type=float,
-                                help='transition time in seconds',
-                                required=True
+                                default=2.5,
+                                help='transition time in seconds, default 2.5',
+                                required=False
                                 )
 
 
         arg_parser.add_argument(
                                 '-l','--length', 
                                 type=float,
-                                help='Time length in seconds per image',
-                                required=True
+                                default=1800.0,
+                                help='Time length in seconds per image, default 1800',
+                                required=False
                                 )
 
         arg_parser.add_argument(
                                 '-o','--overlay', 
                                 action='store_true',
                                 help='Enables use of overlay transition',
+                                required=False
+                                )
+
+        arg_parser.add_argument(
+                                '-s','--size', 
+                                type=str,
+                                help='wallpaper,zoom,centered,scaled,stretched,or spaned',
+                                default='scaled',
                                 required=False
                                 )
         return arg_parser.parse_args()
@@ -146,6 +156,8 @@ def main():
     with open(xml_file,'w') as f:
         f.write(formated_xml.decode())
     
+    
+    gsettings_set('org.gnome.desktop.background',None,'picture-options', args.size)
     gsettings_set('org.gnome.desktop.background',None,'picture-uri','file://' + xml_file)
 
 if __name__ == '__main__':
