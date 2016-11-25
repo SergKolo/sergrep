@@ -25,6 +25,7 @@ class  GreeterWindow(Gtk.Window):
         lines = [ fields[i] + " " + sysinfo[i] for i in range(len(sysinfo))]
 
         lines.append( '\nIP addresses:\n' + self.get_ip_addresses()  )
+        lines.append('\n\n' + self.get_updates())
 
         label1 = Gtk.Label("\n".join(lines))
 
@@ -33,6 +34,10 @@ class  GreeterWindow(Gtk.Window):
         button = Gtk.Button(label="Got it !")
         button.connect("clicked", self.on_button_clicked)
         grid.attach_next_to(button,label1,Gtk.PositionType.BOTTOM,1,2)
+
+    def get_updates(self,*args):
+        cmd = "/usr/lib/update-notifier/apt-check --human-readable".split()
+        return self.run_cmd(cmd).decode().strip()
 
     def on_button_clicked(self,*args):
         Gtk.main_quit()
