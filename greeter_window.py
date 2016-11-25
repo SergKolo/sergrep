@@ -30,8 +30,12 @@ class  GreeterWindow(Gtk.Window):
 
         grid.attach_next_to(label1,greeting,Gtk.PositionType.BOTTOM,1,2)
         #grid.add(label1)
-        button = Gtk.Button(label="Click Here")
+        button = Gtk.Button(label="Got it !")
+        button.connect("clicked", self.on_button_clicked)
         grid.attach_next_to(button,label1,Gtk.PositionType.BOTTOM,1,2)
+
+    def on_button_clicked(self,*args):
+        Gtk.main_quit()
 
     def get_ip_addresses(self,*args):
         cmd = ['ip','-o','addr','show']
