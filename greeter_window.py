@@ -65,10 +65,8 @@ class  GreeterWindow(Gtk.Window):
 
     def run_cmd(self, cmdlist):
         """ utility: reusable function for running external commands """
-        new_env = dict(os.environ)
-        new_env['LC_ALL'] = 'C'
         try:
-            stdout = subprocess.check_output(cmdlist, env=new_env)
+            stdout = subprocess.check_output(cmdlist)
         except subprocess.CalledProcessError:
             pass
         else:
