@@ -2,6 +2,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GdkX11, Gdk, Gtk
+import subprocess
 
 
 def main():
@@ -36,4 +37,7 @@ def main():
     # to which we're moving it.
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        subprocess.call(['zenity','--error','--text',__file__ + ':' + str(e)])

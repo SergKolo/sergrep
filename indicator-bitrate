@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import dbus
+import gi
+gi.require_version('AppIndicator3', '0.1')
+import signal
+from gi.repository import AppIndicator3,Gtk,GLib
+
+class IndicatorBitrate(object):
+
+    def __init__(self):
+        self.app = AppIndicator3.Indicator.new(
+            'indicator-bitrate', "gtk-network",
+            AppIndicator3.IndicatorCategory.HARDWARE
+        )
+        self.app_menu = Gtk.Menu()
+        self.quit_button = Gtk.MenuItem('quit')
+        self.quit_button.connect('activate', lambda *args: Gtk.main_quit())
+        self.app_menu.append(self.quit_button)
+        self.app.set_menu(self.app_menu)
+        self.app_menu.show_all()
+        self.app.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self.update_label()
+
+    def call_dbus_method(self, bus_type, obj, path, interface, method, arg):
+        """ utility: executes dbus method on specific interface"""
+        if bus_type == "session":
+            bus = dbus.SessionBus()
+        if bus_type == "system":
+            bus = dbus.SystemBus()
+        proxy = bus.get_object(obj, path)
+        method = proxy.get_dbus_method(method, interface)
+        if arg:
+            return method(arg)
+        else:
+            return method()
+
+    def get_dbus_property(self, bus_type, obj, path, iface, prop):
+        """ utility:reads properties defined on specific dbus interface"""
+        if bus_type == "session":
+            bus = dbus.SessionBus()
+        if bus_type == "system":
+            bus = dbus.SystemBus()
+        proxy = bus.get_object(obj, path)
+        aux = 'org.freedesktop.DBus.Properties'
+        props_iface = dbus.Interface(proxy, aux)
+        try:
+            props = props_iface.Get(iface, prop)
+            return props
+        except:
+            return None
+
+    def get_human_readable(self, size):
+        """ converts size in bytes to
+        human readable value in powers of 1024.
+        Essentially, same as what df -h gives, or
+        """
+        prefix = ['B', 'KiB', 'MiB', 'GiB',
+                  'TiB', 'PiB', 'EiB',
+                  'ZiB', 'YiB'
+                  ]
+        counter = 0
+        while size / 1024 > 0.9:
+            counter = counter + 1
+            size = size / 1024
+
+        return str(round(size, 2)) + "  " + prefix[counter]
+
+    def update_label(self):
+        self.app.set_label(self.get_bitrates(), '')
+        GLib.timeout_add_seconds(1, self.set_app_label)
+
+    def set_app_label(self):
+        self.update_label()
+
+
+    def get_bitrates(self):
+        # https://people.freedesktop.org/~lkundrak/nm-docs/nm-dbus-types.html#NMDeviceType
+        base = ['system', 'org.freedesktop.NetworkManager']
+        call = base + [ '/org/freedesktop/NetworkManager', 'org.freedesktop.NetworkManager',
+                        'GetAllDevices',None]
+        devs = list(self.call_dbus_method(*call))
+
+        wifi_devs = []
+        for dev in devs:
+            call = base + [dev,'org.freedesktop.NetworkManager.Device',
+                           'DeviceType']
+
+            if int(self.get_dbus_property(*call)) == 2:
+                wifi_devs.append(dev)
+
+        stats = []
+        for dev in wifi_devs:
+            # org.freedesktop.NetworkManager.Device.ActiveConnection
+            call = base + [dev, 'org.freedesktop.NetworkManager.Device', 'IpInterface']
+            iface = self.get_dbus_property(*call)
+            call = base + [dev, 'org.freedesktop.NetworkManager.Device.Wireless',
+                           'Bitrate']
+            bitrate = int(self.get_dbus_property(*call))/1000
+            # bitrate given by this property is in kilobits/second (Kb/s)
+            # according to documentation 
+            stats.append((iface,bitrate))
+        return " ".join([str(i[0])+": "+str(i[1])+'Mb/s' for i in stats]) if stats else "None"
+
+ind = IndicatorBitrate()
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+Gtk.main()
