@@ -50,29 +50,12 @@ class IndicatorBitrate(object):
         except:
             return None
 
-    def get_human_readable(self, size):
-        """ converts size in bytes to
-        human readable value in powers of 1024.
-        Essentially, same as what df -h gives, or
-        """
-        prefix = ['B', 'KiB', 'MiB', 'GiB',
-                  'TiB', 'PiB', 'EiB',
-                  'ZiB', 'YiB'
-                  ]
-        counter = 0
-        while size / 1024 > 0.9:
-            counter = counter + 1
-            size = size / 1024
-
-        return str(round(size, 2)) + "  " + prefix[counter]
-
     def update_label(self):
         self.app.set_label(self.get_bitrates(), '')
         GLib.timeout_add_seconds(1, self.set_app_label)
 
     def set_app_label(self):
         self.update_label()
-
 
     def get_bitrates(self):
         # https://people.freedesktop.org/~lkundrak/nm-docs/nm-dbus-types.html#NMDeviceType
