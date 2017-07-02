@@ -47,35 +47,35 @@ ask_to_enable_on_boot(){
 bad_arguments(){
      # check if second argument is a character 
      case "$2" in 
-         [A-Z]) return 0;;
-         *) return 1;;
+         [A-Z]) return 1;;
+         *) return 0;;
      esac
 
     # Check if first argument is a digit. 
     # https://stackoverflow.com/a/3951175/3701431
     case "$1" in
-        ''|*[!0-9]*) return 1;;
-        *) return 0 ;;
+        ''|*[!0-9]*) return 0;;
+        *) return 1 ;;
     esac 
 
 }
 
 main(){
 
+    # Check if we're root and if args are OK. If everything is ok, do stuff
 
     if is_root 
     then
-        
-        if [ $# -ne 2   ] ||  bad_arguments
+        if [ $# -ne 2   ] ||  bad_arguments "$@"
         then
             printf "%s\n" ">>> ERR: $0: bad or insufficient arguments" > /dev/stderr
             printf "%s\n" ">>> Usage: $0 INTEGER LETTER" > /dev/stderr
             exit 2
         fi
-
         make_swap_file "$@" && ask_to_enable_on_boot
     else
         printf ">>> ERR: $0 must run as root\n" > /dev/stderr
+        exit 1
     fi
 }
 
