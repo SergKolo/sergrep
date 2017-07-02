@@ -36,7 +36,7 @@ ask_to_enable_on_boot(){
    read ANSWER
    case "$ANSWER" in
     [Yy]) printf "\n%s none swap defaults 0 0\n" "$filename"  >> /etc/fstab &&
-       printf "\n %s added to /etc/fstab successfuly" "$filename"
+       printf "\n %s added to /etc/fstab successfuly\n" "$filename"
        exit 0 ;;
     [Nn]) printf "Exiting\n" && exit 0 ;;
     *) printf "Wrong input: %s . Exiting. /etc/fstab not altered\n" "$ANSWER" && exit 1 ;;
