@@ -23,9 +23,10 @@ make_swap_file(){
    dd if=/dev/zero  of="$filename" bs=1"$2" count="$1"
    chmod 600 "$filename"
    mkswap "$filename" && 
-   swapon "$filename" && 
-   printf "\nCreated and turned on %s\n"  "$filename"
-   printf "Current swap ammount: %f" "$(get_swap_amount)"
+   swapon "$filename" && {
+       printf "\nCreated and turned on %s\n"  "$filename"
+       printf "Current swap ammount: %f\n" "$(get_swap_amount)"
+   }
 }
 
 
