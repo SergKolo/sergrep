@@ -45,7 +45,7 @@ def find_git_repositories(tree_root,icon):
 def parse_args():
     """ Parses command-line arguments """
     arg_parser = argparse.ArgumentParser(
-    description='Serg\'s XML slideshow creator',
+        description='Finds and sets github repository icons',
     )
     arg_parser.add_argument('-i','--icon',help='image to set,required',
                             type=str,required=True)
