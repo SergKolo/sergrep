@@ -1,0 +1,19 @@
+{
+  "name": "sergrep",
+  "version": "1.0.0",
+  "description": "Scripts written for AskUbuntu questions or personal use",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yar-trach/sergrep.git"
+  },
+  "author": "SergKolo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yar-trach/sergrep/issues"
+  },
+  "homepage": "https://github.com/yar-trach/sergrep#readme"
+}
