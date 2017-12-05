@@ -31,15 +31,14 @@
 #     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #     DEALINGS IN THE SOFTWARE.
-
-ARGV0="$0"
+ARGV0=$0
 ARGC=$#
 
 
 
 store()
 {
-   cat $SYSDIR/*/actual_brightness > "$1"
+   cat "$SYSDIR"/*/actual_brightness > "$1"
 }
 #----------
 
@@ -49,16 +48,16 @@ store()
 
 restore()
 {
-  MAX=$(< $SYSDIR/*/max_brightness  )
-  LIMIT=$(($MAX/10)) # get approx 10 percent value
-  VAL=$(< "$1" )
-  if [ $VAL -lt $LIMIT  ] ;
+  MAX=$(cat "$SYSDIR"/*/max_brightness  )
+  LIMIT=$((MAX/10)) # get approx 10 percent value
+  VAL=$(cat "$1" )
+  if [ "$VAL" -lt "$LIMIT"  ] ;
   then
        # avoid going bellow 10% of brightness
        # we don't want user's screen to be completely dark
-       echo $LIMIT > $SYSDIR/*/brightness
+       echo "$LIMIT" > "$SYSDIR"/*/brightness
   else
-       echo $VAL > $SYSDIR/*/brightness
+       echo "$VAL" > "$SYSDIR"/*/brightness
   fi
 }
 #------------
@@ -70,7 +69,12 @@ restore()
 
 create_datafile()
 {
-  cat $SYSDIR/*/actual_brightness > $1 
+  cat "$SYSDIR"/*/actual_brightness > "$1" 
+}
+
+puke(){
+    printf "%s\n" "$@" > /dev/stderr
+    exit 1
 }
 
 main()
@@ -79,19 +83,24 @@ main()
   local SYSDIR="/sys/class/backlight" # sysfs location of all the data
 
   # Check pre-conditions for running the script
-  if [ $ARGC -ne 1  ] || [ $(id -u) -ne 0 ]   ; then
-     exit 1
+  if [ "$ARGC" -ne 1  ];then
+     puke "Script requires 1 argument"
+  fi
+
+  if [ $(id -u) -ne 0 ]   ; then
+     puke "Script has to run as root"
   fi
 
   # ensure datafile exists
-  [ -f $DATAFILE  ] || create_datafile $DATAFILE
-  
+  [ -f "$DATAFILE"  ] || create_datafile "$DATAFILE"
+
   # perform storing or restoring function
-  if [ "$1" = restore ];then
-     restore  $DATAFILE
-  else
-     store $DATAFILE
-  fi
+  case "$1" in
+     'restore') restore  $DATAFILE ;;
+     'store') store $DATAFILE ;;
+     *) puke "Unknown argument";;
+  esac
+
 }
 
 main "$@"
