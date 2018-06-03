@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Author: Serg Kolo
+# Date: June 1, 2018
+# Written for: https://askubuntu.com/q/1043035/295286
+# Based on: https://www.linuxquestions.org/questions/linux-server-73/directory-quota-601140/
+
 set -e
 
 print_usage(){
